@@ -164,7 +164,7 @@ func NewAzureClient(subscriptionID, resourceGroupName, storageAccountName string
 	azureClient.ImagesClient.ResponseInspector = byConcatDecorators(byInspecting(maxlen), errorCapture(azureClient))
 	azureClient.ImagesClient.UserAgent += packerUserAgent
 
-	azureClient.SnapshotsClient = compute.NewSnapshotClientWithBaseURI(cloud.ResourceManagerEndpoint, subscriptionID)
+	azureClient.SnapshotsClient = compute.NewSnapshotsClientWithBaseURI(cloud.ResourceManagerEndpoint, subscriptionID)
 	azureClient.SnapshotsClient.Authorizer = autorest.NewBearerAuthorizer(servicePrincipalToken)
 	azureClient.SnapshotsClient.RequestInspector = withInspection(maxlen)
 	azureClient.SnapshotsClient.ResponseInspector = byConcatDecorators(byInspecting(maxlen), errorCapture(azureClient))

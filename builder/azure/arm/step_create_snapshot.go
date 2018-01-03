@@ -16,9 +16,9 @@ type StepSnapshotImage struct {
 	//	captureVhd          func(resourceGroupName string, computeName string, parameters *compute.VirtualMachineCaptureParameters, cancelCh <-chan struct{}) error
 	//captureManagedImage func(resourceGroupName string, computeName string, parameters *compute.Image, cancelCh <-chan struct{}) error
 	Snapshots func(resourceGroupName string, snapshotName string, snapshots *compute.Snapshots, cancelCh <-chan struct{}) error
-	get      func(client *AzureClient) *CaptureTemplate
-	say      func(message string)
-	error    func(e error)
+	get       func(client *AzureClient) *CaptureTemplate
+	say       func(message string)
+	error     func(e error)
 }
 
 func NewStepSnapshotsImage(client *AzureClient, ui packer.Ui) *StepSnapshotsImage {
@@ -35,12 +35,12 @@ func NewStepSnapshotsImage(client *AzureClient, ui packer.Ui) *StepSnapshotsImag
 		},
 	}
 
-	step.snapshot = step.Snapshots
+	step.Snapshots = step.Snapshots
 
 	return step
 }
 
-func (s *StepSnapshotImage) Snapshot(resourceGroupName string, snapshotName string, snapshots *compute.Snapshots, cancelCh <-chan struct{}) error {
+func (s *StepSnapshotImage) Snapshots(resourceGroupName string, snapshotsName string, snapshots *compute.Snapshots, cancelCh <-chan struct{}) error {
 	_, errChan := s.client.SnapshotsClient.CreateOrUpdate(resourceGroupName, snapshotName, *snapshots, cancelCh)
 	err := <-errChan
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *StepSnapshotImage) Run(state multistep.StateBag) multistep.StepAction {
 			s.say(fmt.Sprintf(" -> Snapshot ResourceGroupName   : '%s'", targetSnapshotResourceGroupName))
 			s.say(fmt.Sprintf(" -> Snapshot Name                : '%s'", targetSnapshotName))
 			s.say(fmt.Sprintf(" -> Snapshot Location            : '%s'", targetSnapshotLocation))
-			return s.snapshot(targetSnapshotResourceGroupName, targetSnapshotName, snapshotParameters, cancelCh)
+			return s.Snapshots(targetSnapshotResourceGroupName, targetSnapshotName, snapshotParameters, cancelCh)
 			// } else {
 			// 	return s.captureVhd(resourceGroupName, computeName, vmCaptureParameters, cancelCh)
 			// }
