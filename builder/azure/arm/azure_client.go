@@ -41,7 +41,7 @@ type AzureClient struct {
 	network.VirtualNetworksClient
 	compute.ImagesClient
 	compute.VirtualMachinesClient
-	compute.SnapshotClient
+	compute.SnapshotsClient
 	common.VaultClient
 	armStorage.AccountsClient
 	disk.DisksClient
@@ -164,11 +164,11 @@ func NewAzureClient(subscriptionID, resourceGroupName, storageAccountName string
 	azureClient.ImagesClient.ResponseInspector = byConcatDecorators(byInspecting(maxlen), errorCapture(azureClient))
 	azureClient.ImagesClient.UserAgent += packerUserAgent
 
-	azureClient.SnapshotClient = compute.NewSnapshotClientWithBaseURI(cloud.ResourceManagerEndpoint, subscriptionID)
-	azureClient.SnapshotClient.Authorizer = autorest.NewBearerAuthorizer(servicePrincipalToken)
-	azureClient.SnapshotClient.RequestInspector = withInspection(maxlen)
-	azureClient.SnapshotClient.ResponseInspector = byConcatDecorators(byInspecting(maxlen), errorCapture(azureClient))
-	azureClient.SnapshotClient.UserAgent += packerUserAgent
+	azureClient.SnapshotsClient = compute.NewSnapshotClientWithBaseURI(cloud.ResourceManagerEndpoint, subscriptionID)
+	azureClient.SnapshotsClient.Authorizer = autorest.NewBearerAuthorizer(servicePrincipalToken)
+	azureClient.SnapshotsClient.RequestInspector = withInspection(maxlen)
+	azureClient.SnapshotsClient.ResponseInspector = byConcatDecorators(byInspecting(maxlen), errorCapture(azureClient))
+	azureClient.SnapshotsClient.UserAgent += packerUserAgent
 
 	azureClient.InterfacesClient = network.NewInterfacesClientWithBaseURI(cloud.ResourceManagerEndpoint, subscriptionID)
 	azureClient.InterfacesClient.Authorizer = autorest.NewBearerAuthorizer(servicePrincipalToken)
