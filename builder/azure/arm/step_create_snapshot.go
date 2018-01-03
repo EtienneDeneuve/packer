@@ -15,13 +15,13 @@ type StepSnapshotImage struct {
 	//generalizeVM func(resourceGroupName, computeName string) error
 	//	captureVhd          func(resourceGroupName string, computeName string, parameters *compute.VirtualMachineCaptureParameters, cancelCh <-chan struct{}) error
 	//captureManagedImage func(resourceGroupName string, computeName string, parameters *compute.Image, cancelCh <-chan struct{}) error
-	Snapshot func(resourceGroupName string, snapshotName string, snapshot *compute.Snapshot, cancelCh <-chan struct{}) error
+	Snapshots func(resourceGroupName string, snapshotName string, snapshots *compute.Snapshots, cancelCh <-chan struct{}) error
 	get      func(client *AzureClient) *CaptureTemplate
 	say      func(message string)
 	error    func(e error)
 }
 
-func NewStepSnapshotImage(client *AzureClient, ui packer.Ui) *StepSnapshotImage {
+func NewStepSnapshotsImage(client *AzureClient, ui packer.Ui) *StepSnapshotsImage {
 	var step = &StepSnapshotImage{
 		client: client,
 		get: func(client *AzureClient) *CaptureTemplate {
@@ -35,13 +35,13 @@ func NewStepSnapshotImage(client *AzureClient, ui packer.Ui) *StepSnapshotImage 
 		},
 	}
 
-	step.snapshot = step.Snapshot
+	step.snapshot = step.Snapshots
 
 	return step
 }
 
-func (s *StepSnapshotImage) Snapshot(resourceGroupName string, snapshotName string, snapshot *compute.Snapshot, cancelCh <-chan struct{}) error {
-	_, errChan := s.client.SnapshotClient.CreateOrUpdate(resourceGroupName, snapshotName, *snapshot, cancelCh)
+func (s *StepSnapshotImage) Snapshot(resourceGroupName string, snapshotName string, snapshots *compute.Snapshots, cancelCh <-chan struct{}) error {
+	_, errChan := s.client.SnapshotsClient.CreateOrUpdate(resourceGroupName, snapshotName, *snapshots, cancelCh)
 	err := <-errChan
 	if err != nil {
 		s.say(s.client.LastError.Error())
@@ -57,7 +57,7 @@ func (s *StepSnapshotImage) Run(state multistep.StateBag) multistep.StepAction {
 	var location = state.Get(constants.ArmLocation).(string)
 	var resourceGroupName = state.Get(constants.ArmResourceGroupName).(string)
 	// var vmCaptureParameters = state.Get(constants.ArmVirtualMachineCaptureParameters).(*compute.VirtualMachineCaptureParameters)
-	var snapshotParameters = state.Get(constants.ArmImageParameters).(*compute.Snapshot)
+	var snapshotParameters = state.Get(constants.ArmImageParameters).(*compute.Snapshots)
 
 	var targetSnapshotResourceGroupName = state.Get(constants.ArmManagedImageResourceGroupName).(string)
 	var targetSnapshotName = state.Get(constants.ArmManagedImageName).(string)

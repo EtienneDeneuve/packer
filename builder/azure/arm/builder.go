@@ -183,7 +183,7 @@ func (b *Builder) Run(ui packer.Ui, hook packer.Hook, cache packer.Cache) (packe
 			&packerCommon.StepProvision{},
 			NewStepGetOSDisk(azureClient, ui),
 			NewStepPowerOffCompute(azureClient, ui),
-			NewStepSnapshotImage(azureClient, ui),
+			NewStepSnapshotsImage(azureClient, ui),
 			NewStepCaptureImage(azureClient, ui),
 			NewStepDeleteResourceGroup(azureClient, ui),
 			NewStepDeleteOSDisk(azureClient, ui),
